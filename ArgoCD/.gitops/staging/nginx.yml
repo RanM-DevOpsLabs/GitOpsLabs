@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-stg
+spec:
+  containers:
+  - name: nginx-stg
+    image: nginx
+    ports:
+    - containerPort: 80
