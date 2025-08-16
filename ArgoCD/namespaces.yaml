@@ -1,6 +1,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: argocd
+  labels:
+    name: argocd
+    environment: infra-management
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: lab
   labels:
     name: lab
@@ -12,4 +20,4 @@ metadata:
   name: staging
   labels:
     name: staging
-    environment: staging 
+    environment: staging
