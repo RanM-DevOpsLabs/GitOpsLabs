@@ -1,4 +1,4 @@
-# Multi-Account Git Configuration
+# Multi-Account Local Git Configuration
 
 This setup allows you to automatically use the correct Git user configuration and SSH keys based on the directory where your repository is located.
 
