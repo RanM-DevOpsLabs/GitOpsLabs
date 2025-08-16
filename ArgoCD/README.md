@@ -1,5 +1,3 @@
-![argo-sync](https://github.com/user-attachments/assets/ba32b45d-0c47-4867-b821-e689e359d02e)# GitOps Lab Setup Guide
-
 This guide walks you through setting up a local Kubernetes cluster using Kind, installing ArgoCD, and deploying applications using GitOps principles.
 
 ## Prerequisites
@@ -13,7 +11,7 @@ Before starting, ensure you have the following tools installed:
 
 
 ## End result
-![argocd-sync](argo-sync.jpg)
+![argo-sync](https://github.com/user-attachments/assets/ba32b45d-0c47-4867-b821-e689e359d02e)# GitOps Lab Setup Guide
 
 
 ## Step 1: Setting up Local Kind Cluster
