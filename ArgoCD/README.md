@@ -22,7 +22,7 @@ kind create cluster --config kind-config.yaml --name gitops-lab
 This will create a cluster with:
 - One control-plane node with ingress capabilities
 - One worker node
-- Port mapping from host port 8080 to container port 80 for ingress access
+- Port mapping from host port 433 to container port 443 for ingress access
 
 Verify the cluster is running:
 ```bash
@@ -37,7 +37,8 @@ Apply the namespace configuration to create the required namespaces:
 kubectl apply -f namespaces.yaml
 ```
 
-This creates two namespaces:
+This creates three namespaces:
+- `argocd` - for argo components
 - `lab` - for development environment
 - `staging` - for staging environment
 
@@ -47,30 +48,63 @@ kubectl get namespaces
 ```
 
 ## Step 3: Installing ArgoCD Core Version
+Note: if you don't care for UI you can always download the core version, just change the URL to: `.../manifests/core-install.yaml`
 
-Install ArgoCD core version in your cluster:
+Install ArgoCD full version in your cluster (with ui supported):
 
 ```bash
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-Wait for ArgoCD components to be ready:
+## Handle argocd-dex-server ImagePullBackOff issue:
+Because we're running this setup locally, there'll be an issue with pulling this image.
+To resolve this, simply:
+1. Pull locally using docker pull: `docker pull ghcr.io/dexidp/dex:v2.43.0`
+2. Edit deployment not to pull the image (force it to use locally mounted one) 
+3. Then load it into kind cluster: `kind load docker-image ghcr.io/dexidp/dex:v2.43.0 --name gitops-lab` </br>
+The argocd-dex-server pod should now be running.
+
+(Optional) Wait for ArgoCD components to be ready:
 ```bash
 kubectl wait --for=condition=available --timeout=300s deployment/argocd-application-controller -n argocd
 kubectl wait --for=condition=available --timeout=300s deployment/argocd-repo-server -n argocd
 ```
 
-## Step 4: ArgoCD Login (Core Mode)
+## Step 4: Install NGINX Ingress Controller
 
 Login to ArgoCD using the core mode:
 
 ```bash
-argocd login --core
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/kind/deploy.yaml
 ```
 
-Note: In core mode, ArgoCD doesn't expose a web UI or API server. All operations are performed through the CLI directly against the Kubernetes API.
+## Step 5: Accessing argocd UI
+## Creating a self-signed certificate for https
+Although the argocd server is exposed in both http (port 80) and https (port 443 - as it can be viewed by its service configs), we'll create a self-signed certificate to connect to its UI using HTTPS.
+This is for the sake of practicing this configuration :)
+## Step 5A: Generate the cert and key
+```bash
+openssl req -x509 -nodes -days 365 \
+  -newkey rsa:2048 \
+  -keyout argocd.key \
+  -out argocd.crt \
+  -config openssl-san.cnf \
+  -extensions req_ext
+```
+## Step 5B: Create the Kubernetes TLS secret
+```bash
+kubectl create secret tls argocd-tls \
+  --key argocd.key \
+  --cert argocd.crt \
+  -n argocd
+```
 
-## Step 5: Create ArgoCD Applications
+## Step 6: Configuring ingress to access argocd UI
+`kubectl apply -f argo-server-ing.yaml` <\br>
+This ingress routes all external calls to the cluster on https (port 443) to argocd-server, allowing us to access its UI.
+
+
+## Step 7: Create ArgoCD Applications
 
 Create the two ArgoCD applications using the provided configurations:
 
