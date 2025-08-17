@@ -1,4 +1,10 @@
+![download](https://github.com/user-attachments/assets/4612c096-61d2-4aa0-9d53-fa22bd2a32ac)
+## Gitops with ArgoCD
+
 This guide walks you through setting up a local Kubernetes cluster using Kind, installing ArgoCD, and deploying applications using GitOps principles.
+
+## What is ArgoCD
+ArgoCD is a continuous delivery tool that implements the GitOps concept  for Kubernetes resources.
 
 ## Prerequisites
 
@@ -11,8 +17,10 @@ Before starting, ensure you have the following tools installed:
 
 
 ## End result
-![argo-sync](https://github.com/user-attachments/assets/ba32b45d-0c47-4867-b821-e689e359d02e)# GitOps Lab Setup Guide
+This guid will walk you through creating argocd application (see: https://argo-cd.readthedocs.io/en/stable/core_concepts/) to sync specific repo and folderpath for countinously deploying reosurces into k8s cluster.<br><br>
+![argo-sync](https://github.com/user-attachments/assets/ba32b45d-0c47-4867-b821-e689e359d02e)
 
+# GitOps Lab Setup Guide
 
 ## Step 1: Setting up Local Kind Cluster
 
@@ -102,10 +110,16 @@ kubectl create secret tls argocd-tls \
   -n argocd
 ```
 
-## Step 6: Configuring ingress to access argocd UI
-`kubectl apply -f argo-server-ing.yaml` <\br>
+## Step 6: Configuring ingress and access argocd UI
+`kubectl apply -f argo-server-ing.yaml` </br>
 This ingress routes all external calls to the cluster on https (port 443) to argocd-server, allowing us to access its UI.
 
+### Login to argo client
+at: `https://localhost` you should be able to view argo login page (mind that we're on HTTPS!)
+
+### Extract admin password
+`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d` </br>
+username is `admin`
 
 ## Step 7: Create ArgoCD Applications
 
