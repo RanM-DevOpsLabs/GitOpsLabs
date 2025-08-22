@@ -17,7 +17,7 @@ Before starting, ensure you have the following tools installed:
 
 
 ## End result
-This guid will walk you through creating argocd application (see: https://argo-cd.readthedocs.io/en/stable/core_concepts/) to sync specific repo and folderpath for countinously deploying reosurces into k8s cluster.<br><br>
+This guide will walk you through creating argocd application (see: https://argo-cd.readthedocs.io/en/stable/core_concepts/) to sync a specific repo and folderpath for continuously deploying resources into a k8s cluster.<br><br>
 ![argo-sync](https://github.com/user-attachments/assets/ba32b45d-0c47-4867-b821-e689e359d02e)
 
 # GitOps Lab Setup Guide
@@ -92,8 +92,12 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ## Step 5: Accessing argocd UI
 ## Creating a self-signed certificate for https
 Although the argocd server is exposed in both http (port 80) and https (port 443 - as it can be viewed by its service configs), we'll create a self-signed certificate to connect to its UI using HTTPS.
+
 This is for the sake of practicing this configuration :)
+
 ## Step 5A: Generate the cert and key
+ - cd into certificates folder: `cd certificates`
+ - create a self-sign certificate using Subject Alternative Name (SAN) (which is configured in openssl-san.cnf). This is a requirement by the k8s client.
 ```bash
 openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
