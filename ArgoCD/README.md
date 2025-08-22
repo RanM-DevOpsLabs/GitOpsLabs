@@ -3,8 +3,21 @@
 
 This guide walks you through setting up a local Kubernetes cluster using Kind, installing ArgoCD, and deploying applications using GitOps principles.
 
+## What is GitOps ?
+GitOps is a practice of managing the realase life cycle of an application within the Git repo.
+It is a on-growing adoption method by many Development teams, as it ease the deployment process, allowing the developers to stay focused with the source code repository. 
+Narrowing down the applications overload often necessary for the CD process.
+
 ## What is ArgoCD
-ArgoCD is a continuous delivery tool that implements the GitOps concept  for Kubernetes resources.
+ArgoCD is a continuous delivery tool that implements the GitOps concept for Kubernetes resources.
+As you'll see in this guide, by creating argocd CRD called Application, we can manager a group of k8s resources, fairly easily.
+This by telling the ArgoCD controller the path of which our resouce definition files will be stored. 
+When the controller "picks" them up, it will reconcile into the k8s environment:
+- if they're not exist there, it would create them
+- if they've been modified in default branch, it would update them
+- if they've been removed - it would either:
+  - remove then if prune is set
+  - will mark them as "out of sync"
 
 ## Prerequisites
 
